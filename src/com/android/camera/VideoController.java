@@ -58,24 +58,26 @@ public class VideoController extends PieController
 
         addItem(CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE, FLOAT_PI_DIVIDED_BY_TWO - sweep, sweep);
         addItem(CameraSettings.KEY_WHITE_BALANCE, 3 * FLOAT_PI_DIVIDED_BY_TWO + sweep, sweep);
-        PieItem item = makeItem(R.drawable.ic_switch_video_facing_holo_light);
-        item.setFixedSlice(FLOAT_PI_DIVIDED_BY_TWO + sweep,  sweep);
-        item.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(PieItem item) {
-                // Find the index of next camera.
-                ListPreference pref = mPreferenceGroup.findPreference(CameraSettings.KEY_CAMERA_ID);
-                if (pref != null) {
-                    int index = pref.findIndexOfValue(pref.getValue());
-                    CharSequence[] values = pref.getEntryValues();
-                    index = (index + 1) % values.length;
-                    int newCameraId = Integer.parseInt((String) values[index]);
-                    mListener.onCameraPickerClicked(newCameraId);
+        PieItem item = null;
+        if (group.findPreference(CameraSettings.KEY_CAMERA_ID) != null) {
+            item = makeItem(R.drawable.ic_switch_video_facing_holo_light);
+            item.setFixedSlice(FLOAT_PI_DIVIDED_BY_TWO + sweep,  sweep);
+            item.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(PieItem item) {
+                    // Find the index of next camera.
+                    ListPreference pref = mPreferenceGroup.findPreference(CameraSettings.KEY_CAMERA_ID);
+                    if (pref != null) {
+                        int index = pref.findIndexOfValue(pref.getValue());
+                        CharSequence[] values = pref.getEntryValues();
+                        index = (index + 1) % values.length;
+                        int newCameraId = Integer.parseInt((String) values[index]);
+                        mListener.onCameraPickerClicked(newCameraId);
+                    }
                 }
-            }
-        });
-        mRenderer.addItem(item);
+            });
+            mRenderer.addItem(item);
+        }	
         mOtherKeys = new String[] {
                 CameraSettings.KEY_VIDEO_EFFECT,
                 CameraSettings.KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL,
