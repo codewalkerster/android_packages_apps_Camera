@@ -29,10 +29,10 @@ import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-
 import com.android.camera.ui.CameraSwitcher;
 import com.android.gallery3d.app.PhotoPage;
 import com.android.gallery3d.util.LightCycleHelper;
+import android.hardware.Camera.CameraInfo;
 
 public class CameraActivity extends ActivityBase
         implements CameraSwitcher.CameraSwitchListener {
@@ -40,7 +40,6 @@ public class CameraActivity extends ActivityBase
     public static final int VIDEO_MODULE_INDEX = 1;
     public static final int PANORAMA_MODULE_INDEX = 2;
     public static final int LIGHTCYCLE_MODULE_INDEX = 3;
-
     CameraModule mCurrentModule;
     private FrameLayout mFrame;
     private ShutterButton mShutter;
@@ -57,24 +56,43 @@ public class CameraActivity extends ActivityBase
     // The orientation compensation for icons. Eg: if the value
     // is 90, the UI components should be rotated 90 degrees counter-clockwise.
     private int mOrientationCompensation = 0;
-
+    private boolean bFindBackCamera = false;
+    private int cameranum=0;
     private static final String TAG = "CAM_activity";
-
     private static final int[] DRAW_IDS = {
             R.drawable.ic_switch_camera,
             R.drawable.ic_switch_video,
             R.drawable.ic_switch_pan,
             R.drawable.ic_switch_photosphere
+    }; 
+    private static final int[] DRAW_IDS_FRONT_CAMERA= {
+            R.drawable.ic_switch_camera,
+            R.drawable.ic_switch_video
     };
-
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
         setContentView(R.layout.camera_main);
         mFrame =(FrameLayout) findViewById(R.id.main_content);
-        mDrawables = new Drawable[DRAW_IDS.length];
-        for (int i = 0; i < DRAW_IDS.length; i++) {
-            mDrawables[i] = getResources().getDrawable(DRAW_IDS[i]);
+        int cameranum = android.hardware.Camera.getNumberOfCameras();
+        CameraInfo cinfo = new CameraInfo();
+        for (int i = 0; i < cameranum; i++) {
+            android.hardware.Camera.getCameraInfo(i, cinfo);
+            if (cinfo.facing == CameraInfo.CAMERA_FACING_BACK) {
+                bFindBackCamera = true;
+                break;
+            }
+        }
+        if(bFindBackCamera){
+           mDrawables = new Drawable[DRAW_IDS.length];
+           for (int i = 0; i < DRAW_IDS.length; i++) {
+                mDrawables[i] = getResources().getDrawable(DRAW_IDS[i]);
+           }
+        } else {
+           mDrawables = new Drawable[DRAW_IDS_FRONT_CAMERA.length];
+           for (int i = 0; i < DRAW_IDS_FRONT_CAMERA.length; i++) {
+                mDrawables[i] = getResources().getDrawable(DRAW_IDS_FRONT_CAMERA[i]);
+           } 
         }
         init();
         if (MediaStore.INTENT_ACTION_VIDEO_CAMERA.equals(getIntent().getAction())
@@ -95,17 +113,27 @@ public class CameraActivity extends ActivityBase
         mShutterSwitcher = findViewById(R.id.camera_shutter_switcher);
         mShutter = (ShutterButton) findViewById(R.id.shutter_button);
         mSwitcher = (CameraSwitcher) findViewById(R.id.camera_switcher);
-        mSwitcher.setDrawIds(DRAW_IDS);
-        int[] drawids = new int[LightCycleHelper.hasLightCycleCapture(this)
+        if(bFindBackCamera){
+           mSwitcher.setDrawIds(DRAW_IDS);
+           int[] drawids = new int[LightCycleHelper.hasLightCycleCapture(this)
                                 ? DRAW_IDS.length : DRAW_IDS.length - 1];
-        int ix = 0;
-        for (int i = 0; i < mDrawables.length; i++) {
-            if (i == LIGHTCYCLE_MODULE_INDEX && !LightCycleHelper.hasLightCycleCapture(this)) {
-                continue; // not enabled, so don't add to UI
+           int ix = 0;
+           for(int i = 0; i < mDrawables.length; i++) {
+               if (i == LIGHTCYCLE_MODULE_INDEX && !LightCycleHelper.hasLightCycleCapture(this)) {
+                   continue; // not enabled, so don't add to UI
+               }  
+               drawids[ix++] = DRAW_IDS[i];
+           }
+           mSwitcher.setDrawIds(drawids);
+         } else {
+            mSwitcher.setDrawIds(DRAW_IDS_FRONT_CAMERA);
+            int[] drawids = new int[DRAW_IDS_FRONT_CAMERA.length];
+            int ix = 0;
+            for (int i = 0; i < mDrawables.length; i++) {
+                drawids[ix++] = DRAW_IDS[i];
             }
-            drawids[ix++] = DRAW_IDS[i];
+            mSwitcher.setDrawIds(drawids);
         }
-        mSwitcher.setDrawIds(drawids);
         mSwitcher.setSwitchListener(this);
         mSwitcher.setCurrentIndex(mCurrentModuleIndex);
     }
