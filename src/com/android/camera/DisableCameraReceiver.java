@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Camera.CameraInfo;
 import android.util.Log;
+import android.os.SystemProperties;
 
 // We want to disable camera-related activities if there is no camera. This
 // receiver runs when BOOT_COMPLETED intent is received. After running once
@@ -40,6 +41,11 @@ public class DisableCameraReceiver extends BroadcastReceiver {
         boolean needCameraActivity = CHECK_BACK_CAMERA_ONLY
             ? hasBackCamera()
             : hasCamera();
+
+        //if hw support usb camera, it need to show camera in app list,add for MBX,wangwei
+        if(SystemProperties.getBoolean("hw.hasusbcamera", false))
+			needCameraActivity =true;
+        //wangwei,finish
 
         if (!needCameraActivity) {
             Log.i(TAG, "disable all camera activities");
