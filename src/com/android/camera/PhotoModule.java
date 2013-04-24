@@ -111,7 +111,7 @@ public class PhotoModule
     private static final int START_PREVIEW_DONE = 10;
     private static final int OPEN_CAMERA_FAIL = 11;
     private static final int CAMERA_DISABLED = 12;
-
+    private static final int CAMERA_DELAY=13;
     // The subset of parameters we need to update in setCameraParameters().
     private static final int UPDATE_PARAM_INITIALIZE = 1;
     private static final int UPDATE_PARAM_ZOOM = 2;
@@ -428,6 +428,11 @@ public class PhotoModule
                             R.string.camera_disabled);
                     break;
                 }
+                case CAMERA_DELAY: {
+                    mShutterButton.setOnShutterButtonListener(PhotoModule.this);
+                    break;
+                }
+                    
             }
         }
     }
@@ -619,9 +624,8 @@ public class PhotoModule
         // Initialize shutter button.
         mShutterButton = mActivity.getShutterButton();
         mShutterButton.setImageResource(R.drawable.btn_new_shutter);
-        mShutterButton.setOnShutterButtonListener(this);
         mShutterButton.setVisibility(View.VISIBLE);
-
+        mHandler.sendEmptyMessageDelayed(CAMERA_DELAY,600);
         mImageSaver = new ImageSaver();
         mImageNamer = new ImageNamer();
 
