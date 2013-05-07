@@ -45,6 +45,8 @@ import com.android.gallery3d.app.PhotoPage;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.ui.ScreenNail;
 import com.android.gallery3d.util.MediaSetUtils;
+import android.util.Log;
+import android.content.res.Configuration;
 
 /**
  * Superclass of camera activity.
@@ -478,17 +480,37 @@ public abstract class ActivityBase extends AbstractGalleryActivity
     @Override
     public void onLayoutChange(View v, int left, int top, int right, int bottom) {
         if (mAppBridge == null) return;
-
         int width = right - left;
         int height = bottom - top;
         if (ApiHelper.HAS_SURFACE_TEXTURE) {
             CameraScreenNail screenNail = (CameraScreenNail) mCameraScreenNail;
+            boolean layout= getResources().getBoolean(R.bool.change_layout);
             if (Util.getDisplayRotation(this) % 180 == 0) {
-                screenNail.setPreviewFrameLayoutSize(width, height);
+                if(layout&&(!mAppBridge.isPanorama())) {
+                    if(height*4>width*3) { 
+                        int mard=(int)(height-width*3/4); 
+                        screenNail.setPreviewFrameLayoutSize(width,height-mard);                    
+                    } else { 
+                        int mard=(int)(width-height*4/3);  
+                        screenNail.setPreviewFrameLayoutSize(width-mard,height);
+                    }     
+                }
+                else
+                    screenNail.setPreviewFrameLayoutSize(width, height);             
             } else {
                 // Swap the width and height. Camera screen nail draw() is based on
                 // natural orientation, not the view system orientation.
-                screenNail.setPreviewFrameLayoutSize(height, width);
+                if(layout&&(!mAppBridge.isPanorama())) {
+                    if(height*3>width*4) { 
+                        int mard=(int)(height-width*4/3); 
+                        screenNail.setPreviewFrameLayoutSize(height-mard,width);
+                    } else {
+                        int mard=(int)(width-height*3/4);
+                        screenNail.setPreviewFrameLayoutSize(height,width-mard);
+                    }
+                }               
+                else
+                    screenNail.setPreviewFrameLayoutSize(height, width);
             }
             notifyScreenNailChanged();
         }
