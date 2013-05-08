@@ -2555,6 +2555,7 @@ public class PhotoModule
                 LayoutParams.WRAP_CONTENT);
         lp.gravity = Gravity.CENTER;
         ((FrameLayout) mRootView).addView(mPopup, lp);
+        mRootView.requestFocusFromTouch();
     }
 
     public void dismissPopup(boolean topPopupOnly) {
