@@ -33,6 +33,7 @@ import android.widget.ImageView;
 import com.android.camera.PreferenceGroup;
 import com.android.camera.R;
 import com.android.camera.Util;
+import android.util.Log;//add_lzy
 
 /**
  * A view that contains camera setting indicators in two levels. The first-level
@@ -205,6 +206,7 @@ public class IndicatorControlWheel extends IndicatorControl implements
     public void onClick(View view) {
         changeIndicatorsLevel();
     }
+boolean tmp_isZoomSupported=true;
 
     public void initialize(Context context, PreferenceGroup group,
             boolean isZoomSupported, String[] keys, String[] otherSettingKeys) {
@@ -216,6 +218,8 @@ public class IndicatorControlWheel extends IndicatorControl implements
         setPreferenceGroup(group);
 
         // Add the ZoomControl if supported.
+       tmp_isZoomSupported=isZoomSupported;
+		
         initializeZoomControl(isZoomSupported);
 
         // Add CameraPicker.
@@ -493,7 +497,15 @@ public class IndicatorControlWheel extends IndicatorControl implements
                 view.setVisibility(View.GONE);
                 continue;
             }
-            view.setVisibility(View.VISIBLE);
+		if (!tmp_isZoomSupported && (view==mZoomControl))  //add_lzy
+			{
+			view.setVisibility(View.INVISIBLE);
+			//Log.e(TAG,"in setting INVISIBLE!!!!!!!!!");		
+			}
+		else{
+                             view.setVisibility(View.VISIBLE);
+			//	 Log.e(TAG,"in setting VISIBLE~~~~~");	
+		}
             int x = mCenterX + (int)(mWheelRadius * Math.cos(radian));
             int y = mCenterY - (int)(mWheelRadius * Math.sin(radian));
             int width = view.getMeasuredWidth();

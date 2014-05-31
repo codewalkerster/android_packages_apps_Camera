@@ -70,9 +70,13 @@ public class OtherSettingsPopup extends AbstractSettingPopup
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView != null) return convertView;
+           // if (convertView != null) return convertView; add_lzy
+           
 
             ListPreference pref = mListItem.get(position);
+		   
+	     if ((convertView != null)&&(pref==((InLineSettingItem) convertView).mPreference)) 
+	          return convertView;//lisw:solve display problem in other settings menu. add_lzy
 
             int viewLayoutId = getSettingLayoutId(pref);
             InLineSettingItem view = (InLineSettingItem)

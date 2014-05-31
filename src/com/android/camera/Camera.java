@@ -1293,7 +1293,23 @@ public class Camera extends ActivityBase implements FocusManager.Listener,
         final String[] OTHER_SETTING_KEYS = {
                 CameraSettings.KEY_RECORD_LOCATION,
                 CameraSettings.KEY_PICTURE_SIZE,
+                // Add setting menu by wk.m
+                CameraSettings.KEY_BRIGHTNESS,
+                CameraSettings.KEY_ISO_VALUE,
+                CameraSettings.KEY_EFFECT,
+                CameraSettings.KEY_METERING,
+                CameraSettings.KEY_ANTIBANDING,
+                CameraSettings.KEY_CONTRAST,
+                CameraSettings.KEY_SATURATION,
+                CameraSettings.KEY_SHARPNESS,
+                CameraSettings.KEY_HUE,
+                //CameraSettings.KEY_WDR,
+                CameraSettings.KEY_JPEG_QUAL,
+                // ------------------------ //
                 CameraSettings.KEY_FOCUS_MODE};
+                // by hm choi
+                //CameraSettings.KEY_AE_LOCK,
+                //CameraSettings.KEY_AWB_LOCK
 
         CameraPicker.setImageResourceId(R.drawable.ic_switch_photo_facing_holo_light);
         mIndicatorControlContainer.initialize(this, mPreferenceGroup,
@@ -2024,7 +2040,8 @@ public class Camera extends ActivityBase implements FocusManager.Listener,
         Size optimalSize = Util.getOptimalPreviewSize(this, sizes,
                 (double) size.width / size.height);
         Size original = mParameters.getPreviewSize();
-        if (!original.equals(optimalSize)) {
+        // Preview should be stopped and started when preview and picture sizes are changed - by wk.m
+        if (!original.equals(optimalSize) ) {
             mParameters.setPreviewSize(optimalSize.width, optimalSize.height);
 
             // Zoom related settings will be changed for different preview
@@ -2111,6 +2128,107 @@ public class Camera extends ActivityBase implements FocusManager.Listener,
             mFocusManager.overrideFocusMode(mParameters.getFocusMode());
         }
 
+        // Set ISO value by wk.m
+        String isoValue = mPreferences.getString(
+                CameraSettings.KEY_ISO_VALUE,
+                getString(R.string.pref_camera_isovalue_default));
+        if ( mParameters.get("iso") == null) {
+                //mParameters.set("iso", "auto");
+        } else {
+                mParameters.set("iso", isoValue);
+        }
+        //--------------------------------------------//
+        // Set Effect by wk.m
+        String effect = mPreferences.getString(
+                CameraSettings.KEY_EFFECT,
+                getString(R.string.pref_camera_effect_default));
+        if ( mParameters.getColorEffect() == null) {//add_lzy
+                //mParameters.setColorEffect("none");//add_lzy
+        } else {
+                mParameters.setColorEffect(effect);
+        }
+        //--------------------------------------------//
+        // Set Brightness by wk.m
+        int brightness = CameraSettings.readBrightness(mPreferences);
+/*	
+        if (brightness >= min && brightness <= max) {
+            mParameters.set("brightness", brightness);
+        } else {
+            Log.w(TAG, "invalid brightness range: " + brightness);
+        }
+*/
+       mParameters.set("brightness", brightness);  //yqf added , min&max:how to get brightness min&max value?
+
+        //--------------------------------------------//
+        // Set Metering by wk.m
+        String metering = mPreferences.getString(
+                CameraSettings.KEY_METERING,
+                getString(R.string.pref_camera_metering_default));
+        if (mParameters.get("metering") == null) {//add_lzy
+                //mParameters.set("metering", "center");//add_lzy
+        } else {
+                mParameters.set("metering", metering);
+        }
+        //--------------------------------------------//
+        // Set AFC by wk.m
+        String antibanding = mPreferences.getString(
+                CameraSettings.KEY_ANTIBANDING,
+                getString(R.string.pref_camera_antibanding_default));
+        if ( mParameters.getAntibanding() == null) {//add_lzy
+                //mParameters.setAntibanding("off");//add_lzy
+        } else {
+                mParameters.setAntibanding(antibanding);
+        }
+        //--------------------------------------------//
+        // Set Saturation by wk.m
+        int saturation = CameraSettings.readSaturation(mPreferences);
+        if (saturation >= min && saturation <= max) {
+            mParameters.set("saturation", saturation);
+        } else {
+            Log.w(TAG, "invalid saturation range: " + saturation);
+        }
+        //--------------------------------------------//
+        //--------------------------------------------//
+
+        // Set Sharpness by wk.m
+        int sharpness = CameraSettings.readSharpness(mPreferences);
+        if (sharpness >= min && sharpness <= max) {
+            mParameters.set("sharpness", sharpness);
+        } else {
+            Log.w(TAG, "invalid sharpness range: " + sharpness);
+        }
+        //--------------------------------------------//
+        // Set Hue by wk.m
+        int hue = CameraSettings.readHue(mPreferences);
+        if (hue >= min && hue <= max) {
+            mParameters.set("hue", hue);
+        } else {
+            Log.w(TAG, "invalid hue range: " + hue);
+        }
+        //--------------------------------------------//
+        // Set Contrast by wk.m
+        String contrast = mPreferences.getString(
+                CameraSettings.KEY_CONTRAST,
+                getString(R.string.pref_camera_contrast_default));
+
+        if (mParameters.get("contrast")== null) {//add_lzy
+                //mParameters.set("contrast", "0");//add_lzy
+        } else {
+                mParameters.set("contrast", contrast);
+        }
+        //--------------------------------------------//
+        // Set WDR value by wk.m
+        int wdr = CameraSettings.readWdr(mPreferences);
+        if (value >= 0 && value <= 1) {
+            mParameters.set("wdr", wdr);
+        } else {
+            Log.w(TAG, "invalid wdr range: " + wdr);
+        }
+        //--------------------------------------------//
+        // Set Jpeg Quality by wk.m
+        int jpeg_quality = CameraSettings.readJpegQuality(mPreferences);
+        mParameters.setJpegQuality(jpeg_quality);
+        //--------------------------------------------//
         if (mContinousFocusSupported) {
             if (mParameters.getFocusMode().equals(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
                 mCameraDevice.setAutoFocusMoveCallback(mAutoFocusMoveCallback);
@@ -2375,8 +2493,10 @@ public class Camera extends ActivityBase implements FocusManager.Listener,
         mMeteringAreaSupported = (mInitialParams.getMaxNumMeteringAreas() > 0);
         mAeLockSupported = mInitialParams.isAutoExposureLockSupported();
         mAwbLockSupported = mInitialParams.isAutoWhiteBalanceLockSupported();
-        mContinousFocusSupported = mInitialParams.getSupportedFocusModes().contains(
-                Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+
+        //mContinousFocusSupported = 
+	//		mInitialParams.getSupportedFocusModes().contains(
+     //           Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
     }
 
     // PreviewFrameLayout size has changed.

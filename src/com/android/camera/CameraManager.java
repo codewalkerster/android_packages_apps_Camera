@@ -305,9 +305,9 @@ public class CameraManager {
         }
 
         public void setAutoFocusMoveCallback(AutoFocusMoveCallback cb) {
-            mSig.close();
-            mCameraHandler.obtainMessage(SET_AUTO_FOCUS_MOVE_CALLBACK, cb).sendToTarget();
-            mSig.block();
+//            mSig.close();
+//            mCameraHandler.obtainMessage(SET_AUTO_FOCUS_MOVE_CALLBACK, cb).sendToTarget();
+//            mSig.block();
         }
 
         public void takePicture(final ShutterCallback shutter, final PictureCallback raw,

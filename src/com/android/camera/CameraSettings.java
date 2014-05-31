@@ -53,8 +53,59 @@ public class CameraSettings {
     public static final String KEY_CAMERA_ID = "pref_camera_id_key";
     public static final String KEY_CAMERA_FIRST_USE_HINT_SHOWN = "pref_camera_first_use_hint_shown_key";
     public static final String KEY_VIDEO_FIRST_USE_HINT_SHOWN = "pref_video_first_use_hint_shown_key";
+    // Add ISO setting menu by wk.m
+    public static final String KEY_ISO_VALUE = "pref_camera_isovalue_key";
+    //--------------------------------------------------------------------
+    // Add Effect setting menu by wk.m
+    public static final String KEY_EFFECT = "pref_camera_effect_key";
+    //--------------------------------------------------------------------
+    // Add Brightness setting menu by wk.m
+    public static final String KEY_BRIGHTNESS = "pref_camera_brightness_key";
+    //--------------------------------------------------------------------
+    // Add Metering setting menu by wk.m
+    public static final String KEY_METERING = "pref_camera_metering_key";
+    //--------------------------------------------------------------------
+    // Add Anti-banding setting menu by wk.m
+    public static final String KEY_ANTIBANDING = "pref_camera_antibanding_key";
+    //--------------------------------------------------------------------
+    // Add Contrast setting menu by wk.m
+    public static final String KEY_CONTRAST = "pref_camera_contrast_key";
+    //--------------------------------------------------------------------
+    // Add Saturation setting menu by wk.m
+    public static final String KEY_SATURATION = "pref_camera_saturation_key";
+    //--------------------------------------------------------------------
+    // Add Sharpness setting menu by wk.m
+    public static final String KEY_SHARPNESS = "pref_camera_sharpness_key";
+    //--------------------------------------------------------------------
+    // Add Hue setting menu by wk.m
+    public static final String KEY_HUE = "pref_camera_hue_key";
+    //--------------------------------------------------------------------
+    // Add Face Detection setting menu by wk.m
+    public static final String KEY_WDR = "pref_camera_wdr_key";
+    //--------------------------------------------------------------------
+    // Add Jpeg Quality setting menu by wk.m
+    public static final String KEY_JPEG_QUAL = "pref_camera_jpeg_qual_key";
+    //--------------------------------------------------------------------
+    public static final String KEY_AE_LOCK = "pref_camera_ae_lock_key";
+    public static final String KEY_AWB_LOCK = "pref_camera_awb_lock_key";
 
     public static final String EXPOSURE_DEFAULT_VALUE = "0";
+    // by Brightness wk.m
+    public static final String BRIGHTNESS_DEFAULT_VALUE = "0";
+    // by Saturation wk.m
+    public static final String SATURATION_DEFAULT_VALUE = "0";
+    // by Sharpness wk.m
+    public static final String SHARPNESS_DEFAULT_VALUE = "0";
+    // by Hue wk.m
+    public static final String HUE_DEFAULT_VALUE = "0";
+    // by WDR wk.m
+    public static final String WDR_DEFAULT_VALUE = "0";
+    // by Jpeg Quality wk.m
+    public static final String JPEG_QUAL_DEFAULT_VALUE = "100";
+
+    // Auto Exposure and WhiteBalance Lock by hm choi
+    public static final String AE_LOCK_DEFAULT_VALUE = "0";
+    public static final String AWB_LOCK_DEFAULT_VALUE = "0";
 
     public static final int CURRENT_VERSION = 5;
     public static final int CURRENT_LOCAL_VERSION = 2;
@@ -191,6 +242,103 @@ public class CameraSettings {
             initVideoEffect(group, videoEffect);
             resetIfInvalid(videoEffect);
         }
+
+        //jmq.add. UI setting of "iso"
+        ListPreference curPref = group.findPreference(KEY_ISO_VALUE);
+		Log.e(TAG," mParameters.get ISO "+mParameters.get("iso"));//add_lzy
+	 if(curPref != null && mParameters.get("iso")==null)
+	 {
+	     Log.i(TAG,"Can't get iso setting");
+	     removePreference(group, curPref.getKey());
+	 }
+	 // jmq.add. UI setting of "Effect"
+	 curPref = group.findPreference(KEY_EFFECT);
+	 if(curPref != null && mParameters.getColorEffect()==null)
+	 {
+	     Log.i(TAG,"Can't get effect setting");
+	     removePreference(group, curPref.getKey());
+	 }
+        //jmq.add. UI setting of "Brightness"
+	 curPref = group.findPreference(KEY_BRIGHTNESS);
+	 if(curPref != null && mParameters.get("brightness")==null)
+	 {
+	     Log.i(TAG,"Can't get brightness setting");
+	     removePreference(group, curPref.getKey());
+	 }else
+	     Log.e(TAG,"brightness setting"+mParameters.get("brightness")
+	     +" saturation:"+mParameters.get("saturation")
+	     +" sharpness:"+mParameters.get("sharpness")
+	     +" hue:"+mParameters.get("hue"));
+        // jmq.add. UI setting of "Metering"
+	 curPref = group.findPreference(KEY_METERING);
+	 if(curPref != null && mParameters.get("metering")==null)
+	 {
+	     Log.i(TAG,"Can't get metering setting");
+	     removePreference(group, curPref.getKey());
+	 }
+        // jmq.add. UI setting of "AFC"
+	 curPref = group.findPreference(KEY_ANTIBANDING);
+	 if(curPref != null && mParameters.getAntibanding()==null)
+	 {
+	     Log.i(TAG,"Can't get Antibanding setting");
+	     removePreference(group, curPref.getKey());
+	 }
+        // jmq.add. UI setting of "Saturation"
+	 curPref = group.findPreference(KEY_SATURATION);
+	 if(curPref != null && mParameters.get("saturation")==null)
+	 {
+	     Log.i(TAG,"Can't get saturation setting");
+	     removePreference(group, curPref.getKey());
+	 }
+        // jmq.add. UI setting of "Sharpness"
+	 curPref = group.findPreference(KEY_SHARPNESS);
+	 if(curPref != null && mParameters.get("sharpness")==null)
+	 {
+	     Log.i(TAG,"Can't get sharpness setting");
+	     removePreference(group, curPref.getKey());
+	 }
+        // jmq.add. UI setting of "Hue"
+	 curPref = group.findPreference(KEY_HUE);
+	 if(curPref != null && mParameters.get("hue")==null)
+	 {
+	     Log.i(TAG,"Can't get hue setting");
+	     removePreference(group, curPref.getKey());
+	 }
+        // jmq.add. UI setting of "Contrast"
+	 curPref = group.findPreference(KEY_CONTRAST);
+	 if(curPref != null && mParameters.get("contrast")==null)
+	 {
+	     Log.i(TAG,"Can't get contrast setting");
+	     removePreference(group, curPref.getKey());
+	 }
+        // jmq.add. UI setting of "WDR"
+	 curPref = group.findPreference(KEY_WDR);
+	 if(curPref != null && mParameters.get("wdr")==null)
+	 {
+	     Log.i(TAG,"Can't get wdr setting");
+	     removePreference(group, curPref.getKey());
+	 }
+        // jmq.add. UI setting of "Jpeg Quality"
+	 curPref = group.findPreference(KEY_JPEG_QUAL);
+	 if(curPref != null && mParameters.get("jpeg-quality")==null)//jmq.add.Parameters.KEY_JPEG_QUALITY is private
+	 {
+	     Log.i(TAG,"Can't get jpeg quality setting");
+	     removePreference(group, curPref.getKey());
+	 }
+	 // jmq.add. UI setting of "AE Lock"
+	 curPref = group.findPreference(KEY_AE_LOCK);
+	 if(curPref != null && mParameters.isAutoExposureLockSupported()==false)
+	 {
+	     Log.i(TAG,"Can't get AE Lock setting");
+	     removePreference(group, curPref.getKey());
+	 }
+	         // jmq.add. UI setting of "AWB Lock"
+	 curPref = group.findPreference(KEY_AWB_LOCK);
+	 if(curPref != null && mParameters.isAutoWhiteBalanceLockSupported()==false)
+	 {
+	     Log.i(TAG,"Can't get AWB Lock setting");
+	     removePreference(group, curPref.getKey());
+	 }
     }
 
     private void buildExposureCompensation(
@@ -398,6 +546,102 @@ public class CameraSettings {
         }
         return 0;
     }
+    // Add Brightness by wk.m
+    public static int readBrightness(ComboPreferences preferences) {
+        String brightness = preferences.getString(
+                CameraSettings.KEY_BRIGHTNESS,
+                BRIGHTNESS_DEFAULT_VALUE);
+        try {
+            return Integer.parseInt(brightness);
+        } catch (Exception ex) {
+            Log.e(TAG, "Invalid brightness: " + brightness);
+        }
+        return 0;
+    }
+    // Add Saturation by wk.m
+    public static int readSaturation(ComboPreferences preferences) {
+        String saturation = preferences.getString(
+                CameraSettings.KEY_SATURATION,
+                SATURATION_DEFAULT_VALUE);
+        try {
+            return Integer.parseInt(saturation);
+        } catch (Exception ex) {
+            Log.e(TAG, "Invalid saturation: " + saturation);
+        }
+        return 0;
+    }
+    // Add Sharpness by wk.m
+    public static int readSharpness(ComboPreferences preferences) {
+        String sharpness = preferences.getString(
+                CameraSettings.KEY_SHARPNESS,
+                SHARPNESS_DEFAULT_VALUE);
+        try {
+            return Integer.parseInt(sharpness);
+        } catch (Exception ex) {
+            Log.e(TAG, "Invalid sharpness: " + sharpness);
+        }
+        return 0;
+    }
+    // Add Hue by wk.m
+    public static int readHue(ComboPreferences preferences) {
+        String hue = preferences.getString(
+                CameraSettings.KEY_HUE,
+                HUE_DEFAULT_VALUE);
+        try {
+            return Integer.parseInt(hue);
+        } catch (Exception ex) {
+            Log.e(TAG, "Invalid hue: " + hue);
+        }
+        return 0;
+    }
+    // Add WDR by wk.m
+    public static int readWdr(ComboPreferences preferences) {
+        String wdr = preferences.getString(
+                CameraSettings.KEY_WDR,
+                WDR_DEFAULT_VALUE);
+        try {
+            return Integer.parseInt(wdr);
+        } catch (Exception ex) {
+            Log.e(TAG, "Invalid wdr: " + wdr);
+        }
+        return 0;
+    }
+    // Add Jpeg Quality by wk.m
+    public static int readJpegQuality(ComboPreferences preferences) {
+        String jpeg_qual = preferences.getString(
+                CameraSettings.KEY_JPEG_QUAL,
+                JPEG_QUAL_DEFAULT_VALUE);
+        try {
+            return Integer.parseInt(jpeg_qual);
+        } catch (Exception ex) {
+            Log.e(TAG, "Invalid jpeg_qual: " + jpeg_qual);
+        }
+        return 0;
+    }
+    // Add AE Lock by hm choi
+    public static boolean readAELock(ComboPreferences preferences) {
+        String ae_lock = preferences.getString(
+                CameraSettings.KEY_AE_LOCK,
+                AE_LOCK_DEFAULT_VALUE);
+        try {
+            return ae_lock.equals("1");
+        } catch (Exception ex) {
+            Log.e(TAG, "Invalid ae_lock: " + ae_lock);
+        }
+        return false;
+    }
+    // Add AWB Lock by hm choi
+    public static boolean readAWBLock(ComboPreferences preferences) {
+        String awb_lock = preferences.getString(
+                CameraSettings.KEY_AWB_LOCK,
+                AWB_LOCK_DEFAULT_VALUE);
+        try {
+            return awb_lock.equals("1");
+        } catch (Exception ex) {
+            Log.e(TAG, "Invalid awb_lock: " + awb_lock);
+        }
+        return false;
+    }
 
     public static int readEffectType(SharedPreferences pref) {
         String effectSelection = pref.getString(KEY_VIDEO_EFFECT, "none");
@@ -492,6 +736,10 @@ public class CameraSettings {
             supported.add(Integer.toString(CamcorderProfile.QUALITY_480P));
         }
 
+	 //jmq.add for qcif UI
+        if (CamcorderProfile.hasProfile(mCameraId, CamcorderProfile.QUALITY_QCIF)) {
+            supported.add(Integer.toString(CamcorderProfile.QUALITY_QCIF));
+        }
         return supported;
     }
 
